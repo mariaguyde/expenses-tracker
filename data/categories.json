@@ -1,0 +1,7 @@
+[
+        {"id" : 1, "name":"bills"},
+        {"id" : 2, "name":"rent"},
+        {"id" : 3, "name":"food"},
+        {"id" : 4, "name":"transportation"},
+        {"id" : 5, "name":"entertainment"}
+]

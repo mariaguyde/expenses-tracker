@@ -14,9 +14,14 @@
             <input type="name" name="expense" placeholder="Expense">
             <input type="number" name="amount" placeholder="Amount">
             <input type="date" name="date" placeholder="Date">
+            <select name="category">
+                <option value="">Select a category</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                {% endfor %}
+            </select>
             <button type="submit">Add</button>
         </form>
-
     </div>
 
     <script>
