@@ -7,7 +7,6 @@
 </head>
 <body>
     <h1>Basic Expense Tracker</h1>
-
     <div>
         <p>Add an expense</p>
         <form id="expenseForm" action="/add" method="post">
@@ -22,6 +21,29 @@
             </select>
             <button type="submit">Add</button>
         </form>
+
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Expense</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exp in expenses %}
+                        <tr>
+                            <td>{{exp.expense}}</td>
+                            <td>{{exp.amount}}</td>
+                            <td>{{exp.date}}</td>
+                            <td>{{exp.category}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -34,9 +56,16 @@
                 body: formData
             });
 
-            const result = await response.json();
-            if (result.success) {
-                this.reset();
+            if (response.ok) {
+                const result = await response.json();
+                const table = document.querySelector('table');
+                const row = document.createElement('tr');
+                for (let item in result) {
+                    let column = document.createElement('td');
+                    column.textContent = result[item];
+                    row.append(column);
+                }
+                table.append(row); // todo set int the right order
             }
         });
     </script>

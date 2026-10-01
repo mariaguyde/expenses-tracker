@@ -8,7 +8,10 @@ def home():
     with open("data/categories.json", "r", encoding="utf-8") as f:
         categories = json.load(f)
 
-    return render_template('index.html',categories=categories);
+    with open("data/data.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    return render_template('index.html',categories=categories, expenses=data["expenses"]);
 
 @app.route("/add", methods=["POST"])
 def add():
@@ -31,8 +34,8 @@ def add():
     with open("data/data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
-    #return jsonify({"success": True, "expense": expense, "amount": amount, "date": date})
-    return redirect(url_for('home'))
+    return jsonify({"date": date, "amount": amount, "expense": expense})
+    #return redirect(url_for('home'))
 
 
 app.run(debug=True)
