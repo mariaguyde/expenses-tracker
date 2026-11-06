@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, json, redirect, url_for
+from datetime import datetime
 
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
@@ -8,6 +9,7 @@ from flask import send_file
 from io import BytesIO
 
 app = Flask(__name__)
+app.json.sort_keys = False
 
 @app.route("/")
 def home():
@@ -17,6 +19,10 @@ def home():
 
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
+    
+    for e in data["expenses"]:
+        e["category"] = getCategoryName(e["category"])
+        e["date"] = datetime.strptime(e["date"], "%Y-%m-%d").strftime("%d/%m/%Y")
 
     return render_template('index.html',categories=categories, expenses=data["expenses"]);
 
@@ -31,7 +37,9 @@ def add():
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    id = str(len(data["expenses"]))
     data["expenses"].append({
+        "id": id,
         "expense": expense,
         "amount": amount,
         "date": date,
@@ -41,8 +49,17 @@ def add():
     with open("data/data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
-    return jsonify({"date": date, "amount": amount, "expense": expense})
-    #return redirect(url_for('home'))
+    return jsonify({"expense": expense, "amount": amount, "date": getDateInDDMMYYYY(date), "category": getCategoryName(category), "actions": id})
+
+@app.route("/delete/<id>", methods=["POST"])
+def delete(id):
+    with open("data/data.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["expenses"] = [e for e in data["expenses"] if e["id"] != id]
+    with open("data/data.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+    return {"status": "ok"};
 
 
 @app.route("/download")
@@ -53,27 +70,29 @@ def download():
         pdf_data,
         mimetype='application/pdf',
         as_attachment=True,             
-        download_name='rapport_budget.pdf'
+        download_name='expenses_report.pdf'
     )   
 
 
 def generatepdf():
     pdf_buffer = BytesIO()
     
-    doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,rightMargin=20, leftMargin=20, topMargin=20, bottomMargin=20)
-    elements = [ Spacer(1, 12),Paragraph('Expenses Report'), Spacer(1, 12)];
+    doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50)
+    style_title = ParagraphStyle('Title', fontSize=18, bold=True, alignment=1);
+    elements = [Paragraph('Expenses Report', style_title), Spacer(1, 40)];
     
     # Table
     styles = getSampleStyleSheet()
     style_text = styles['Normal']
-    style_cell = ParagraphStyle('Cell', parent=style_text, fontSize=10, leading=12)
-    style_header = ParagraphStyle('Header', parent=style_text, fontSize=11, leading=13, textColor=colors.whitesmoke)
+    style_cell = ParagraphStyle('Cell', parent=style_text, fontSize=12, leading=12)
+    style_header = ParagraphStyle('Header', parent=style_text, fontSize=12, leading=13, textColor=colors.black, bold=False)
     dataTable = [[Paragraph("<b>Name</b>", style_header), Paragraph("<b>Amount</b>", style_header), Paragraph("<b>Category</b>", style_header), Paragraph("<b>Date</b>", style_header)]];
     
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
     for expense in data["expenses"]:
+        expense["date"] = datetime.strptime(expense["date"], "%Y-%m-%d").strftime("%d/%m/%Y")
         dataTable.append([
             Paragraph(expense["expense"], style_cell),
             Paragraph(expense["amount"], style_cell),
@@ -81,16 +100,16 @@ def generatepdf():
             Paragraph(expense["date"], style_cell)
         ])
     
-    colWidthPersonalized = [150, 100, 100, 100];
+    colWidthPersonalized = [200, 100, 100, 120];
     tableau = Table(dataTable, colWidths=colWidthPersonalized)
     tableau.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#1A365D")),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor("#F7FAFC")]),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#CBD5E0")),
+        ('LEFTPADDING',  (0, 0), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+        ('TOPPADDING',    (0, 0), (-1, -1), 7.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 7.5),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor("#ababad")),
     ]))
     
     elements.append(tableau)
@@ -106,5 +125,8 @@ def getCategoryName(category_id):
         if int(category["id"]) == int(category_id):
             return category["name"]
     return "Unknown"
+
+def getDateInDDMMYYYY(date):
+    return datetime.strptime(date, "%Y-%m-%d").strftime("%d/%m/%Y")
 
 app.run(debug=True)

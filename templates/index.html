@@ -9,11 +9,11 @@
     <h1>Basic Expense Tracker</h1>
     <div>
         <p>Add an expense</p>
-        <form id="expenseForm" action="/add" method="post">
-            <input type="name" name="expense" placeholder="Expense">
-            <input type="number" name="amount" placeholder="Amount">
-            <input type="date" name="date" placeholder="Date">
-            <select name="category">
+        <form id="expenseForm" action="/add" method="post" required>
+            <input type="name" name="expense" placeholder="Expense" required/>
+            <input type="number" name="amount" placeholder="Amount" required/>
+            <input type="date" name="date" placeholder="Date" required />
+            <select name="category" required>
                 <option value="">Select a category</option>
                 {% for cat in categories %}
                     <option value="{{ cat.id }}">{{ cat.name }}</option>
@@ -31,6 +31,7 @@
                         <th>Amount</th>
                         <th>Date</th>
                         <th>Category</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +41,9 @@
                             <td>{{exp.amount}}</td>
                             <td>{{exp.date}}</td>
                             <td>{{exp.category}}</td>
+                            <td>
+                                <button class="delete-btn" id="{{exp.id}}">Delete</button>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -48,27 +52,70 @@
     </div>
 
     <script>
-        document.getElementById("expenseForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
 
-            const formData = new FormData(this);
-            const response = await fetch("/add", {
-                method: "POST",
-                body: formData
+        init();
+
+        function init () {
+            initEventListeners();
+        }
+
+        function initEventListeners () {
+
+            const addForm = document.getElementById("expenseForm");
+            addForm.addEventListener("submit", async function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const response = await fetch("/add", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    addItemToExpensesTable(result);
+                    addForm.reset();
+                }
             });
 
-            if (response.ok) {
-                const result = await response.json();
-                const table = document.querySelector('table');
-                const row = document.createElement('tr');
-                for (let item in result) {
+
+            document.querySelectorAll('button.delete-btn').forEach((item) => {
+                item.addEventListener('click', async function(event) {
+                    let id = event.target.getAttribute('id');
+                    const response = await fetch("/delete/"+id, {
+                        method: "POST",
+                    });
+                    if (response.ok) {
+                        event.target.closest('tr').style.display = 'none';
+                    }
+                })
+            });
+        }
+
+        function addItemToExpensesTable(expenseDetails) {
+          
+            const table = document.querySelector('table');
+            const row = document.createElement('tr');
+
+            for (let item in expenseDetails) {
+
+                if (item === 'actions') {
                     let column = document.createElement('td');
-                    column.textContent = result[item];
+                    let btnDelete = document.createElement('button');
+                    btnDelete.textContent = 'Delete';
+                    btnDelete.classList.add('delete-btn');
+                    btnDelete.setAttribute('id', expenseDetails[item]);
+                    column.appendChild(btnDelete);
                     row.append(column);
                 }
-                table.append(row); // todo set int the right order
+                else {
+                    let column = document.createElement('td');
+                    column.textContent = expenseDetails[item];
+                    row.append(column);
+                }
             }
-        });
+            table.append(row);
+        }
+
     </script>
 </body>
 </html>
