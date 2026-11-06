@@ -1,121 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Basic Expense Tracker</h1>
-    <div>
-        <p>Add an expense</p>
-        <form id="expenseForm" action="/add" method="post" required>
-            <input type="name" name="expense" placeholder="Expense" required/>
-            <input type="number" name="amount" placeholder="Amount" required/>
-            <input type="date" name="date" placeholder="Date" required />
-            <select name="category" required>
-                <option value="">Select a category</option>
-                {% for cat in categories %}
-                    <option value="{{ cat.id }}">{{ cat.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Add</button>
-        </form>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home</title>
+    </head>
+    <body>
+        <h1>Basic Expense Tracker</h1>
         <div>
-            <a href="{{ url_for('download') }}" class="">Download the report</a>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Expense</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for exp in expenses %}
-                        <tr>
-                            <td>{{exp.expense}}</td>
-                            <td>{{exp.amount}}</td>
-                            <td>{{exp.date}}</td>
-                            <td>{{exp.category}}</td>
-                            <td>
-                                <button class="delete-btn" id="{{exp.id}}">Delete</button>
-                            </td>
-                        </tr>
+            <p>Add an expense</p>
+            <form id="expenseForm" action="/add" method="post" required>
+                <input type="name" name="expense" placeholder="Expense" required/>
+                <input type="number" name="amount" placeholder="Amount" required/>
+                <input type="date" name="date" placeholder="Date" required />
+                <select name="category" required>
+                    <option value="">Select a category</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
                     {% endfor %}
-                </tbody>
-            </table>
+                </select>
+                <button type="submit">Add</button>
+            </form>
+
+            <div>
+                <a href="{{ url_for('download') }}" class="">Download the report</a>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Expense</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exp in expenses %}
+                            <tr>
+                                <td>{{exp.expense}}</td>
+                                <td>{{exp.amount}}</td>
+                                <td>{{exp.date}}</td>
+                                <td>{{exp.category}}</td>
+                                <td>
+                                    <button class="delete-btn" id="{{exp.id}}">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
-    <script>
-
-        init();
-
-        function init () {
-            initEventListeners();
-        }
-
-        function initEventListeners () {
-
-            const addForm = document.getElementById("expenseForm");
-            addForm.addEventListener("submit", async function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                const response = await fetch("/add", {
-                    method: "POST",
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    addItemToExpensesTable(result);
-                    addForm.reset();
-                }
-            });
 
 
-            document.querySelectorAll('button.delete-btn').forEach((item) => {
-                item.addEventListener('click', async function(event) {
-                    let id = event.target.getAttribute('id');
-                    const response = await fetch("/delete/"+id, {
-                        method: "POST",
-                    });
-                    if (response.ok) {
-                        event.target.closest('tr').style.display = 'none';
-                    }
-                })
-            });
-        }
-
-        function addItemToExpensesTable(expenseDetails) {
-          
-            const table = document.querySelector('table');
-            const row = document.createElement('tr');
-
-            for (let item in expenseDetails) {
-
-                if (item === 'actions') {
-                    let column = document.createElement('td');
-                    let btnDelete = document.createElement('button');
-                    btnDelete.textContent = 'Delete';
-                    btnDelete.classList.add('delete-btn');
-                    btnDelete.setAttribute('id', expenseDetails[item]);
-                    column.appendChild(btnDelete);
-                    row.append(column);
-                }
-                else {
-                    let column = document.createElement('td');
-                    column.textContent = expenseDetails[item];
-                    row.append(column);
-                }
-            }
-            table.append(row);
-        }
-
-    </script>
-</body>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
 </html>
