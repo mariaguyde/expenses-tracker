@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    background: #401c1c;
+}
+
+input, select, textarea {
+    margin-right: 0.6rem;
+}
+
+input, textarea {
+    padding: 5px;
+}
+
+select {
+    padding: 6px;
+}
+
+img[class^='icon-']{
+    width: 15px;
+    margin-right: 0.5rem;
+}
+
+textarea {
+    max-height: 20px;
+}
+
+
+
+#header {
+    background: #401c1c;
+    padding: 10px 2rem;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#content {
+    padding: 2rem;
+}
+
+#expenseForm {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1.2rem;
+}
+
+#expenseForm .inputs {
+    display: flex;
+    flex-direction: row;
+    align-items: normal;
+}
+
+#expenseForm .icon-plus {
+    background: #401c1c;
+    color: white;
+    padding: 3px 7px;
+    border-radius: 13px;
+    margin-right: 0.5rem;
+}
+
+#expenseForm button {
+    padding: 7px 10px;
+}
+
+#content table thead tr {
+    text-align: left;
+}
+
+#content table tr:first-child th:first-child{
+    min-width: 375px;
+}
+
+#content table tr:first-child th:nth-child(2), #content table tr:first-child th:nth-child(3), #content table tr:first-child th:nth-child(4){
+    min-width: 160px;
+}
+
+#content table tr:first-child th:nth-child(5){
+    width: 100%;
+}
+
+#content table td, #content table th {
+    padding: 0.5rem 0;
+    border-bottom: solid 1px #eaeaea;
+}
+
+#content #expenses-list {
+    margin-top: 1rem;
+}
+
+#content #expenses-list .empty-list-msg {
+    font-style: italic;
+    font-weight: bold;
+    color: #666;
+}
+
+#content #expenses-list .title {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#content #expenses-list .title a {
+    text-decoration: none;
+    border: 1px solid #7f7777;
+    padding:7px;
+    border-radius: 3px;
+    color: black;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+}

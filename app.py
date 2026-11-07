@@ -33,6 +33,7 @@ def add():
     amount = request.form["amount"]
     date = request.form["date"]
     category = request.form["category"]
+    notes = request.form["notes"]
 
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -43,13 +44,14 @@ def add():
         "expense": expense,
         "amount": amount,
         "date": date,
-        "category": category
+        "category": category,
+        "notes": notes
     })
 
     with open("data/data.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
-    return jsonify({"expense": expense, "amount": amount, "date": getDateInDDMMYYYY(date), "category": getCategoryName(category), "actions": id})
+    return jsonify({"expense": expense, "amount": amount,"category": getCategoryName(category), "date": getDateInDDMMYYYY(date), "notes": notes, "actions": id})
 
 @app.route("/delete/<id>", methods=["POST"])
 def delete(id):
@@ -86,7 +88,7 @@ def generatepdf():
     style_text = styles['Normal']
     style_cell = ParagraphStyle('Cell', parent=style_text, fontSize=12, leading=12)
     style_header = ParagraphStyle('Header', parent=style_text, fontSize=12, leading=13, textColor=colors.black, bold=False)
-    dataTable = [[Paragraph("<b>Name</b>", style_header), Paragraph("<b>Amount</b>", style_header), Paragraph("<b>Category</b>", style_header), Paragraph("<b>Date</b>", style_header)]];
+    dataTable = [[Paragraph("<b>Name</b>", style_header), Paragraph("<b>Amount</b>", style_header), Paragraph("<b>Category</b>", style_header), Paragraph("<b>Date</b>", style_header), Paragraph("<b>Notes</b>", style_header)]];
     
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -97,10 +99,11 @@ def generatepdf():
             Paragraph(expense["expense"], style_cell),
             Paragraph(expense["amount"], style_cell),
             Paragraph(getCategoryName(expense["category"]), style_cell),
-            Paragraph(expense["date"], style_cell)
+            Paragraph(expense["date"], style_cell),
+            Paragraph(expense["notes"] if "notes" in expense else "", style_cell)
         ])
     
-    colWidthPersonalized = [200, 100, 100, 120];
+    colWidthPersonalized = [150, 70, 100, 90, 100];
     tableau = Table(dataTable, colWidths=colWidthPersonalized)
     tableau.setStyle(TableStyle([
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),

@@ -24,7 +24,7 @@ function initEventListeners() {
     });
 
 
-    document.querySelectorAll('button.delete-btn').forEach((item) => {
+    document.querySelectorAll('.delete-btn').forEach((item) => {
         item.addEventListener('click', async function (event) {
             let id = event.target.getAttribute('id');
             const response = await fetch("/delete/" + id, {
@@ -39,18 +39,19 @@ function initEventListeners() {
 
 function addItemToExpensesTable(expenseDetails) {
 
-    const table = document.querySelector('table');
+    const table = document.querySelector('table tbody');
     const row = document.createElement('tr');
 
     for (let item in expenseDetails) {
 
-        if (item === 'actions') {
+        if (item === 'actions') { 
             let column = document.createElement('td');
-            let btnDelete = document.createElement('button');
-            btnDelete.textContent = 'Delete';
-            btnDelete.classList.add('delete-btn');
-            btnDelete.setAttribute('id', expenseDetails[item]);
-            column.appendChild(btnDelete);
+            let imgDelete = document.createElement('img');
+            imgDelete.src = '../static/assets/imgs/trash.svg';
+            imgDelete.classList.add('icon-trash');
+            imgDelete.classList.add('delete-btn');
+            imgDelete.setAttribute('id', expenseDetails[item]);
+            column.appendChild(imgDelete);
             row.append(column);
         }
         else {
