@@ -35,6 +35,21 @@ function initEventListeners() {
             }
         })
     });
+
+    document.querySelector('.download-btn').addEventListener('click', function() {
+        const overlay = document.querySelector('.overlay');
+        const downloadForm = overlay.querySelector('#downloadForm');
+        overlay.classList.add('overlay-visible');
+
+        downloadForm.querySelector('.close-btn').addEventListener('click', function() {
+            closedDownloadPopin();
+        });
+
+        downloadForm.querySelector('button').addEventListener('click', function() {
+            closedDownloadPopin();
+        });
+
+    });
 }
 
 function addItemToExpensesTable(expenseDetails) {
@@ -61,4 +76,8 @@ function addItemToExpensesTable(expenseDetails) {
         }
     }
     table.append(row);
+}
+
+function closedDownloadPopin() {
+    document.querySelector('.overlay').classList.remove('overlay-visible');
 }

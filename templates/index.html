@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="../static/style.css" rel="stylesheet"/>
         <title>Expense Tracker</title>
     </head>
+
     <body>
-        <div id="header">
-            <p>Expense Tracker</p>
-        </div>
+
+        {% include 'includes/header.html' %}
+
         <div id="content">
             <form id="expenseForm" action="/add" method="post">
                 <p><span class="icon-plus">+</span>Add an expense</p>
@@ -31,10 +33,10 @@
             <div id="expenses-list">
                 <div class="title">
                     <p>Your expenses</p>
-                    <a href="{{ url_for('download') }}" class="">
+                    <button class="download-btn">
                         <img class="icon-download" src="../static/assets/imgs/download.svg" alt="download" />
-                        <span> Download the report</span>
-                    </a>
+                        <span>Download</span>
+                    </button>
                 </div>
                 <table>
                     <thead>
@@ -70,6 +72,9 @@
                 </table>
             </div>
         </div>
+
+        {% include 'includes/download-popin.html' %}
+
     </body>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 

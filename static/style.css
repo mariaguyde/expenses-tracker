@@ -6,6 +6,8 @@ body {
 }
 
 button {
+    display: flex;
+    align-items: center;
     cursor: pointer;
     color: white;
     border: none;
@@ -74,6 +76,18 @@ textarea {
     padding: 7px 10px;
 }
 
+#content #expenses-list .title {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#content .icon-download {
+    filter: invert(1);
+    width: 12px;
+}
+
 #content table thead tr {
     text-align: left;
 }
@@ -95,6 +109,10 @@ textarea {
     border-bottom: solid 1px #eaeaea;
 }
 
+#content table .icon-trash {
+    cursor: pointer;
+}
+
 #content #expenses-list {
     margin-top: 1rem;
 }
@@ -105,20 +123,57 @@ textarea {
     color: #666;
 }
 
-#content #expenses-list .title {
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+
+/* Download form */
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
 }
 
-#content #expenses-list .title a {
-    text-decoration: none;
-    border: 1px solid #7f7777;
-    padding:7px;
-    border-radius: 3px;
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+
+.overlay-visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+#downloadForm {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 30%;
+    position: relative;
+    transition: all 5s ease-in-out;
+}
+
+#downloadForm .content {
+    margin: 25px auto;
+}
+
+#downloadForm .content label {
+    margin: 0 10px  0 0;
+}
+
+#downloadForm .content div {
+    margin: 10px 0;
+}
+
+#downloadForm .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
     color: black;
-    font-weight: normal;
-    display: flex;
-    align-items: center;
+    font-size: 18px;
 }
