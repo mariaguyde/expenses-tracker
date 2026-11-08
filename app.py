@@ -64,10 +64,15 @@ def delete(id):
     return {"status": "ok"};
 
 
-@app.route("/download")
+@app.route("/download", methods=["GET"])
 def download():
-    pdf_data = generatepdf()
-    
+
+    filter_data = False;
+    if request.args.get('date-start') and request.args.get('date-end'):
+        filter_data = {"start": request.args.get('date-start'), "end": request.args.get('date-end')};
+
+    pdf_data = generatepdf(filter_data)
+
     return send_file(
         pdf_data,
         mimetype='application/pdf',
@@ -76,7 +81,7 @@ def download():
     )   
 
 
-def generatepdf():
+def generatepdf(filter_data):
     pdf_buffer = BytesIO()
     
     doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50)
@@ -86,12 +91,19 @@ def generatepdf():
     # Table
     styles = getSampleStyleSheet()
     style_text = styles['Normal']
-    style_cell = ParagraphStyle('Cell', parent=style_text, fontSize=12, leading=12)
-    style_header = ParagraphStyle('Header', parent=style_text, fontSize=12, leading=13, textColor=colors.black, bold=False)
+    style_cell = ParagraphStyle('Cell', parent=style_text, fontSize=11, leading=12)
+    style_header = ParagraphStyle('Header', fontSize=12, leading=13)
     dataTable = [[Paragraph("<b>Name</b>", style_header), Paragraph("<b>Amount</b>", style_header), Paragraph("<b>Category</b>", style_header), Paragraph("<b>Date</b>", style_header), Paragraph("<b>Notes</b>", style_header)]];
     
     with open("data/data.json", "r", encoding="utf-8") as f:
         data = json.load(f)
+
+    if filter_data:
+        data["expenses"] = [e for e in data["expenses"] if filter_data["start"] <= e["date"] <= filter_data["end"]]
+        style_period = ParagraphStyle('Period', fontSize=12, leading=12)
+        period = getDateInDDMMYYYY(filter_data["start"]) + " - " + getDateInDDMMYYYY(filter_data["end"])
+        elements.append(Paragraph(period, style_period))
+        elements.append(Spacer(1, 20))
 
     for expense in data["expenses"]:
         expense["date"] = datetime.strptime(expense["date"], "%Y-%m-%d").strftime("%d/%m/%Y")
