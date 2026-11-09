@@ -16,7 +16,8 @@ function initEventListeners() {
             body: formData
         });
 
-        if (response.ok) {
+        console.log(response);
+        if (response.status == 200) {
             const result = await response.json();
             addItemToExpensesTable(result);
             addForm.reset();
@@ -27,12 +28,10 @@ function initEventListeners() {
     document.querySelectorAll('.delete-btn').forEach((item) => {
         item.addEventListener('click', async function (event) {
             let id = event.target.getAttribute('id');
-            const response = await fetch("/delete/" + id, {
-                method: "POST",
-            });
-            if (response.ok) {
+            const response = await deleteRow(id);
+            if (response.status == 200) 
                 event.target.closest('tr').style.display = 'none';
-            }
+            
         })
     });
 
@@ -68,6 +67,11 @@ function addItemToExpensesTable(expenseDetails) {
             imgDelete.setAttribute('id', expenseDetails[item]);
             column.appendChild(imgDelete);
             row.append(column);
+            imgDelete.addEventListener('click', async function() {
+                const response = await deleteRow(expenseDetails[item]);
+                if (response.status == 200)
+                    row.style.display = 'none';
+            });
         }
         else {
             let column = document.createElement('td');
@@ -80,4 +84,8 @@ function addItemToExpensesTable(expenseDetails) {
 
 function closedDownloadPopin() {
     document.querySelector('.overlay').classList.remove('overlay-visible');
+}
+
+async function deleteRow(id) {
+    return await fetch("/delete/" + id, {method: "POST"});
 }
