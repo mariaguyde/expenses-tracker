@@ -1,11 +1,6 @@
 import json, uuid
 from datetime import datetime
-from utils import getCategoryName, getDateInDDMMYYYY
-
-def getAllCategories():
-    with open("data/categories.json", "r", encoding="utf-8") as f:
-        categories = json.load(f)
-    return categories
+from utils import getDateInDDMMYYYY 
 
 def getAllExpenses():
     with open("data/data.json", "r", encoding="utf-8") as f:
@@ -15,6 +10,20 @@ def getAllExpenses():
         e["category"] = getCategoryName(e["category"])
         e["date"] = getDateInDDMMYYYY(e["date"])
     return data["expenses"]
+
+def getAllCategories():
+    with open("data/categories.json", "r", encoding="utf-8") as f:
+        categories = json.load(f)
+    return categories
+
+def getCategoryName(category_id):
+    with open("data/categories.json", "r", encoding="utf-8") as f:
+        categories = json.load(f)
+
+    for category in categories:
+        if int(category["id"]) == int(category_id):
+            return category["name"]
+    return "Unknown"
 
 def addExpense(data):
     expense = data["expense"]

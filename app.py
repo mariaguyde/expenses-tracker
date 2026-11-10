@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, jsonify, json, redirect, url_
 from datetime import datetime
 
 from pdf_report import generatepdf
-from utils import getCategoryName, getDateInDDMMYYYY
-from storage import getAllCategories, getAllExpenses, addExpense, deleteExpense
+from utils import  getDateInDDMMYYYY
+from storage import getAllCategories, getAllExpenses, addExpense, deleteExpense, getCategoryName
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -19,10 +19,8 @@ def add():
 
 @app.route("/delete/<id>", methods=["POST"])
 def delete(id):
-    deleteExpense(id)
-    if (not deleteExpense(id)):
-        return jsonify({"status": "error"})
-    return jsonify({"status": "ok"})
+    result = deleteExpense(id)
+    return jsonify(result)
 
 
 @app.route("/download", methods=["GET"])

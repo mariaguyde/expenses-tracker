@@ -7,8 +7,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from datetime import datetime
-from utils import getCategoryName, getDateInDDMMYYYY
-
+from utils import getDateInDDMMYYYY
+from storage import getCategoryName
 
 def generatepdf(filter_data):
     pdf_buffer = BytesIO()

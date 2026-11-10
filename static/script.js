@@ -16,7 +16,6 @@ function initEventListeners() {
             body: formData
         });
 
-        console.log(response);
         if (response.status == 200) {
             const result = await response.json();
             addItemToExpensesTable(result);
