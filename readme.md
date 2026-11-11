@@ -1,4 +1,4 @@
-# Expenses Tracker
+# Expense Tracker
 
 A local-first web app for keeping track of expenses and exporting a PDF report of it
 
