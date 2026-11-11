@@ -5,8 +5,8 @@ A local-first web app for keeping track of expenses and exporting a PDF report o
 ## Requirements
 
 - Python 3
-- Flask
-- ReportLab
+- [Flask](https://flask.palletsprojects.com/en/stable/)
+- [ReportLab](https://docs.reportlab.com/reportlab/userguide/ch1_intro/)
 
 ## Getting started
 
